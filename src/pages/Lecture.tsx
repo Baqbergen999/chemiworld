@@ -54,7 +54,7 @@ export default function Lecture() {
   };
 
   return (
-    <div className="flex flex-col gap-8 w-full h-full overflow-y-auto custom-scrollbar pr-4 pb-24">
+    <div className="flex flex-col gap-8 w-full h-full overflow-y-auto custom-scrollbar pb-24">
       <button 
         onClick={() => navigate('/')}
         className="self-start flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition-colors"
