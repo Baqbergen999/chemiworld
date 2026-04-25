@@ -81,7 +81,7 @@ export default function Lecture() {
                   className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-bold rounded-xl shadow-lg transition-transform hover:scale-105"
                 >
                   <PlayCircle size={20} />
-                  {videoLinks[weekNum].length > 1 ? `Бейнесабақ ${idx + 1}` : 'Бейнесабақты Көру'}
+                  {videoLinks[weekNum].length > 1 ? `Виртуалды зертхана ${idx + 1}` : 'Виртуалды зертхана'}
                 </a>
               ))}
             </div>
