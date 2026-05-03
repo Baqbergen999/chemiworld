@@ -66,9 +66,9 @@ export default function Dashboard() {
       <div className="flex-1 space-y-6 overflow-y-auto custom-scrollbar pr-2 pb-24">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 sleek-panel p-6 rounded-2xl">
           <div>
-            <h2 className="title-sleek text-3xl mb-2 text-white">Негізгі Оқу Бағдарламасы</h2>
+            <h2 className="title-sleek text-3xl mb-2 text-white">Периодтық жүйедегі элементтер химиясы</h2>
             <p className="text-sm text-slate-400 max-w-xl leading-relaxed">
-              Ең жеңіл элементтен бастап f-блоктың құпияларына дейінгі 15 апталық саяхатқа шығыңыз. Модульдерді аяқтап, XP жинап, жаңа зертханалық құралдарды ашыңыз.
+              Оқу бағдарламасы: Ең жеңіл элементтен бастап f-блоктың құпияларына дейінгі 15 апталық саяхатқа шығыңыз. Модульдерді аяқтап, XP жинап, жаңа зертханалық құралдарды ашыңыз.
             </p>
           </div>
           

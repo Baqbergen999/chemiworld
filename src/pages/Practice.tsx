@@ -2,35 +2,35 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Gem, Flame } from 'lucide-react';
 import { cn } from '../utils';
-
+import { useGameStore } from '../store';
 import { practiceQuizzes } from '../data/quizzes';
 
 // Duolingo-style path sequence
 const pathNodes = [
-  { id: 1, type: 'start', title: 'Оқу бастау', completed: true },
-  { id: 2, type: 'lesson', title: 'Атом және Ион', completed: true },
-  { id: 3, type: 'practice', title: 'Теңестіру', completed: true },
-  { id: 4, type: 'chest', title: 'Сыйлық', completed: true },
-  { id: 5, type: 'lesson', title: 'Қышқылдар', completed: false, current: true },
-  { id: 6, type: 'lesson', title: 'Негіздер', completed: false },
-  { id: 7, type: 'boss', title: 'Бақылау', completed: false },
-  { id: 8, type: 'lesson', title: 'Тұздар', completed: false },
-  { id: 9, type: 'practice', title: 'Тотығу', completed: false },
-  { id: 10, type: 'chest', title: 'Сыйлық 2', completed: false },
-  { id: 11, type: 'lesson', title: 'Органика 1', completed: false },
-  { id: 12, type: 'lesson', title: 'Органика 2', completed: false },
-  { id: 13, type: 'practice', title: 'Синтез', completed: false },
-  { id: 14, type: 'chest', title: 'Сыйлық 3', completed: false },
-  { id: 15, type: 'lesson', title: 'Металдар', completed: false },
-  { id: 16, type: 'boss', title: 'Сынақ', completed: false },
-  { id: 17, type: 'lesson', title: 'Бейметалдар 1', completed: false },
-  { id: 18, type: 'practice', title: 'Есептер', completed: false },
-  { id: 19, type: 'lesson', title: 'Бейметалдар 2', completed: false },
-  { id: 20, type: 'boss', title: 'Емтихан', completed: false },
+  { id: 1, type: 'start', title: 'Оқу бастау' },
+  { id: 2, type: 'lesson', title: 'Атом және Ион' },
+  { id: 3, type: 'practice', title: 'Теңестіру' },
+  { id: 4, type: 'chest', title: 'Сыйлық' },
+  { id: 5, type: 'lesson', title: 'Қышқылдар' },
+  { id: 6, type: 'lesson', title: 'Негіздер' },
+  { id: 7, type: 'boss', title: 'Бақылау' },
+  { id: 8, type: 'lesson', title: 'Тұздар' },
+  { id: 9, type: 'practice', title: 'Тотығу' },
+  { id: 10, type: 'chest', title: 'Сыйлық 2' },
+  { id: 11, type: 'lesson', title: 'Органика 1' },
+  { id: 12, type: 'lesson', title: 'Органика 2' },
+  { id: 13, type: 'practice', title: 'Синтез' },
+  { id: 14, type: 'chest', title: 'Сыйлық 3' },
+  { id: 15, type: 'lesson', title: 'Металдар' },
+  { id: 16, type: 'boss', title: 'Сынақ' },
+  { id: 17, type: 'lesson', title: 'Бейметалдар 1' },
+  { id: 18, type: 'practice', title: 'Есептер' },
+  { id: 19, type: 'lesson', title: 'Бейметалдар 2' },
+  { id: 20, type: 'boss', title: 'Емтихан' },
 ];
 
 export default function Practice() {
-  const [activeNode, setActiveNode] = useState(5);
+  const { activePathNode, completePathNode } = useGameStore();
   const [showModal, setShowModal] = useState<{show: boolean, nodeId: number | null}>({show: false, nodeId: null});
   const [quizState, setQuizState] = useState<{ active: boolean; currentQ: number; score: number; selectedNode: number | null }>({ active: false, currentQ: 0, score: 0, selectedNode: null });
 
@@ -47,6 +47,10 @@ export default function Practice() {
   };
 
   const closeQuiz = () => {
+    const quizData = practiceQuizzes[quizState.selectedNode as keyof typeof practiceQuizzes] || practiceQuizzes[1];
+    if (quizState.selectedNode && quizState.score === quizData.questions.length) {
+      completePathNode(quizState.selectedNode);
+    }
     setQuizState({ active: false, currentQ: 0, score: 0, selectedNode: null });
   };
 
@@ -70,8 +74,10 @@ export default function Practice() {
           </div>
         ) : (
           <div className="w-full bg-[#080914]/80 p-8 rounded-3xl border border-pink-500/50 shadow-[0_0_40px_rgba(236,72,153,0.2)] text-center">
-            <h2 className="title-sleek text-4xl text-white mb-4">Жарайсыз!</h2>
-            <p className="text-2xl text-slate-300 mb-8">Сіздің ұпайыңыз: <span className="text-pink-400 font-bold">{quizState.score}</span> / {quizData.questions.length}</p>
+            <h2 className={cn("title-sleek text-4xl mb-4", quizState.score === quizData.questions.length ? "text-green-400" : "text-pink-400")}>
+              {quizState.score === quizData.questions.length ? "Жарайсыз! Келесі сабақ ашылды!" : "Бәрін дұрыс табу керек. Қайта көріңіз!"}
+            </h2>
+            <p className="text-2xl text-slate-300 mb-8">Сіздің ұпайыңыз: <span className="text-cyan-400 font-bold">{quizState.score}</span> / {quizData.questions.length}</p>
             <button onClick={closeQuiz} className="px-8 py-4 rounded-xl bg-cyan-500 text-black font-black uppercase tracking-widest hover:bg-cyan-400 transition-colors">Жалғастыру</button>
           </div>
         )}
@@ -98,6 +104,8 @@ export default function Practice() {
         {pathNodes.map((node, index) => {
           // Calculate an SVG-like wavy path offset
           const offset = Math.sin(index * 0.8) * 80;
+          const isCompleted = node.id < activePathNode;
+          const isCurrent = node.id === activePathNode;
           
           return (
             <div key={node.id} className="relative w-full flex justify-center py-4">
@@ -118,15 +126,15 @@ export default function Practice() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  if (node.id <= activeNode) {
+                  if (node.id <= activePathNode) {
                     setShowModal({show: true, nodeId: node.id});
                   }
                 }}
                 className={cn(
                   "relative w-20 h-20 rounded-full border-b-8 flex items-center justify-center text-2xl font-black shadow-lg transition-transform",
-                  node.completed 
+                  isCompleted 
                     ? "bg-cyan-500 border-cyan-700 text-white shadow-cyan-500/50" 
-                    : node.current 
+                    : isCurrent 
                       ? "bg-pink-500 border-pink-700 text-white shadow-pink-500/50 animate-bounce" 
                       : "bg-slate-700 border-slate-900 text-slate-500 cursor-not-allowed"
                 )}
@@ -144,18 +152,37 @@ export default function Practice() {
         })}
       </div>
 
-      {showModal.show && (
+      {showModal.show && showModal.nodeId && (
         <div className="fixed inset-0 z-[100] bg-black/80 flex items-end justify-center sm:items-center">
-           <div className="bg-[#080914] border-t-4 sm:border-4 border-pink-500 w-full sm:w-96 rounded-t-3xl sm:rounded-3xl p-8 shadow-[0_0_50px_rgba(236,72,153,0.3)]">
-              <h2 className="text-2xl font-black text-white mb-2">Сабақты бастау!</h2>
-              <p className="text-slate-400 mb-8 font-medium">Сіз білім деңгейіңізді көтеріп, жаңа дағдыларды меңгеруге дайынсыз ба?</p>
-              
-              <button 
-                onClick={() => startQuiz(showModal.nodeId!)}
-                className="w-full py-4 rounded-xl bg-cyan-500 text-black font-black uppercase tracking-widest text-lg border-b-4 border-cyan-700 active:translate-y-1 active:border-b-0"
-              >
-                Бастау
-              </button>
+           <div className="bg-[#080914] border-t-4 sm:border-4 border-cyan-500 w-full sm:w-96 rounded-t-3xl sm:rounded-3xl p-8 shadow-[0_0_50px_rgba(34,211,238,0.3)]">
+              {pathNodes.find(n => n.id === showModal.nodeId)?.type === 'chest' ? (
+                <>
+                  <h2 className="text-2xl font-black text-white mb-2">Құпия Сыйлық!</h2>
+                  <p className="text-slate-400 mb-8 font-medium">Сіз сыйлық сандығын таптыңыз! Оны ашып, сыйлығыңызды алыңыз.</p>
+                  
+                  <button 
+                    onClick={() => {
+                      completePathNode(showModal.nodeId!);
+                      setShowModal({show: false, nodeId: null});
+                    }}
+                    className="w-full py-4 rounded-xl bg-orange-500 text-black font-black uppercase tracking-widest text-lg border-b-4 border-orange-700 active:translate-y-1 active:border-b-0"
+                  >
+                    Ашу
+                  </button>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-black text-white mb-2">Сабақты бастау!</h2>
+                  <p className="text-slate-400 mb-8 font-medium">Сіз білім деңгейіңізді көтеріп, жаңа дағдыларды меңгеруге дайынсыз ба?</p>
+                  
+                  <button 
+                    onClick={() => startQuiz(showModal.nodeId!)}
+                    className="w-full py-4 rounded-xl bg-cyan-500 text-black font-black uppercase tracking-widest text-lg border-b-4 border-cyan-700 active:translate-y-1 active:border-b-0"
+                  >
+                    Бастау
+                  </button>
+                </>
+              )}
               
               <button 
                 onClick={() => setShowModal({show: false, nodeId: null})}
